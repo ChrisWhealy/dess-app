@@ -1,0 +1,29 @@
+# What the application may depend on. `cargo deny check` fails on a known vulnerability, on a licence that is not listed, and on a
+# crate that does not come from crates.io, which is also what keeps svg-dom-graph a published dependency and never a path or a git one.
+[graph]
+targets = [
+    { triple = "wasm32-unknown-unknown" },
+    { triple = "aarch64-apple-darwin" },
+    { triple = "x86_64-unknown-linux-gnu" },
+]
+
+[advisories]
+version = 2
+yanked = "deny"
+
+[licenses]
+version = 2
+confidence-threshold = 0.9
+# Only the licences that the dependencies have are listed, so a new one is refused until somebody has read it and added it here.
+allow = ["MIT", "Apache-2.0", "Unicode-3.0"]
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+allow-wildcard-paths = true
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = []

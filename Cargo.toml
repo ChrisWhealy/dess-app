@@ -1,0 +1,15 @@
+# The service simulator as an application of its own. It is built from this repository alone: the one thing that it takes from the
+# svg-dom-graph project is the published crate, from crates.io, at the version that crates/service-sim/Cargo.toml names.
+[workspace]
+members = ["app", "crates/service-sim", "crates/service-sim-engine"]
+resolver = "3"
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.85"
+license = "MIT"
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1

@@ -1,0 +1,13 @@
+[package]
+name = "service-sim-engine"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+authors = ["Chris Whealy <chris@whealy.com>"]
+description = "The pure engine of the discrete-event service simulator: an integer-tick event heap, a seeded generator and canonical hashes"
+license = "MIT"
+publish = false
+
+[dependencies]
+sha2 = "0.11"
+serde_json = "1"

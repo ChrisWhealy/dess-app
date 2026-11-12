@@ -1,0 +1,322 @@
+/* The page's own styles: the colours, the reset, and the service simulator panel. */
+:root {
+    --text: #c9d1d9;
+    --text-muted: #8b949e;
+    --text-dim: #6e7681;
+    --accent: #58a6ff;
+    --accent-light: #79c0ff;
+    --code-text: #ef9452;
+    --surface: #161b22;
+    --border: #21262d;
+    --border-strong: #30363d;
+    --error: #f85149;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: ui-monospace, "Cascadia Code", "Fira Code", monospace;
+    background: #0d1117;
+    color: var(--text);
+    min-height: 100vh;
+}
+
+.section {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 3rem;
+}
+
+.section h2 {
+    margin-bottom: 0.75rem;
+}
+
+.section p,
+.section ul {
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+}
+
+.section ul {
+    padding-left: 1.5rem;
+}
+
+.canvas svg {
+    display: block;
+    background: #ffffee;
+}
+
+.demo-error {
+    padding: 0.6rem 0.9rem;
+    margin-top: 0.75rem;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* The service simulator panel. The controls and the inspector are `foreignObject`s of the scene's own <svg>, on its light ground, so they are drawn dark on
+   light and scale with the scene. Every state is a word as well as a style, and the dashed and thick outlines say what a colour would. */
+.dess-holder {
+    display: none;
+}
+
+#dess-stage {
+    position: relative;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+#dess-stage > div > svg {
+    display: block;
+    width: 100%;
+    max-width: 1500px;
+    height: auto;
+}
+
+.dess-fo {
+    box-sizing: border-box;
+    padding: 6px 10px;
+    color: #1e293b;
+    font-size: 14px;
+    line-height: 1.35;
+}
+
+.dess-fo p,
+.dess-fo h3 {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    color: inherit;
+    background: none;
+}
+
+.dess-fo h3 {
+    margin-top: 8px;
+    font-size: 15px;
+}
+
+.dess-fo label {
+    font-weight: 600;
+}
+
+.dess-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px 16px;
+}
+
+.dess-transport,
+.dess-seek {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 10px;
+    margin: 6px 0;
+}
+
+.dess-seek input[type="range"] {
+    flex: 1 1 320px;
+    min-width: 200px;
+}
+
+.dess-fo button {
+    padding: 4px 12px;
+    border: 1px solid #64748b;
+    border-radius: 4px;
+    background: #ffffff;
+    color: #1e293b;
+    font: inherit;
+    cursor: pointer;
+}
+
+.dess-fo button:hover {
+    border-color: #1d4ed8;
+}
+
+.dess-fo button[aria-pressed="true"] {
+    border-color: #1d4ed8;
+    background: #dbeafe;
+}
+
+.dess-fo select {
+    padding: 3px 6px;
+    border: 1px solid #64748b;
+    border-radius: 4px;
+    background: #ffffff;
+    color: #1e293b;
+    font: inherit;
+    max-width: 100%;
+}
+
+.dess-fo button:focus-visible,
+.dess-fo select:focus-visible,
+.dess-fo input:focus-visible {
+    outline: 2px solid #1d4ed8;
+    outline-offset: 2px;
+}
+
+.dess-fo [aria-disabled="true"] {
+    opacity: 0.55;
+    cursor: default;
+}
+
+.dess-reasons {
+    min-height: 1.4em;
+    color: #475569;
+}
+
+.dess-reasons span:not(:empty) {
+    margin-right: 16px;
+}
+
+.dess-side {
+    overflow: hidden;
+    border-left: 1px solid #94a3b8;
+}
+
+.section .dess-side .dess-status {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 1px 10px;
+    margin: 2px 0 4px;
+    font-size: 13px;
+}
+
+.section .dess-side .dess-status dt {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e3a8a;
+}
+
+.section .dess-side .dess-status dd {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 13px;
+    color: #1e293b;
+    overflow-wrap: anywhere;
+}
+
+.dess-side select {
+    display: block;
+    width: 100%;
+    margin: 2px 0 4px;
+    font-size: 13px;
+}
+
+.dess-notice {
+    margin: 0.5rem 0;
+    padding: 0.4rem 0.75rem;
+    border-left: 4px solid #b45309;
+    background: #fef3c7;
+    color: #451a03;
+}
+
+.dess-legend {
+    margin: 0;
+    padding-left: 1.2rem;
+}
+
+/* A server's box takes the colour of what it is doing: green while it runs a job, red while it is down, and the library's own blue
+   while it is idle. The word and the job are still written in the box, so the colour is never the only sign. The state is on the
+   overlay's own slot, so each rule reads it from there, and the box is the node of that name. */
+.svg-dom-graph-content:has(> .ss-overlay [data-ss-key="S0"].ss-busy) > g[aria-label^="S0."] > rect {
+    fill: #bbf7d0;
+    stroke: #15803d;
+}
+
+.svg-dom-graph-content:has(> .ss-overlay [data-ss-key="S0"].ss-down) > g[aria-label^="S0."] > rect {
+    fill: #fecaca;
+    stroke: #b91c1c;
+}
+
+.svg-dom-graph-content:has(> .ss-overlay [data-ss-key="S1"].ss-busy) > g[aria-label^="S1."] > rect {
+    fill: #bbf7d0;
+    stroke: #15803d;
+}
+
+.svg-dom-graph-content:has(> .ss-overlay [data-ss-key="S1"].ss-down) > g[aria-label^="S1."] > rect {
+    fill: #fecaca;
+    stroke: #b91c1c;
+}
+
+.svg-dom-graph-content:has(> .ss-overlay [data-ss-key="S2"].ss-busy) > g[aria-label^="S2."] > rect {
+    fill: #bbf7d0;
+    stroke: #15803d;
+}
+
+.svg-dom-graph-content:has(> .ss-overlay [data-ss-key="S2"].ss-down) > g[aria-label^="S2."] > rect {
+    fill: #fecaca;
+    stroke: #b91c1c;
+}
+
+.svg-dom-graph-content:has(> .ss-overlay [data-ss-key="S3"].ss-busy) > g[aria-label^="S3."] > rect {
+    fill: #bbf7d0;
+    stroke: #15803d;
+}
+
+.svg-dom-graph-content:has(> .ss-overlay [data-ss-key="S3"].ss-down) > g[aria-label^="S3."] > rect {
+    fill: #fecaca;
+    stroke: #b91c1c;
+}
+
+.svg-dom-graph-content:has(> .ss-overlay [data-ss-key="S4"].ss-busy) > g[aria-label^="S4."] > rect {
+    fill: #bbf7d0;
+    stroke: #15803d;
+}
+
+.svg-dom-graph-content:has(> .ss-overlay [data-ss-key="S4"].ss-down) > g[aria-label^="S4."] > rect {
+    fill: #fecaca;
+    stroke: #b91c1c;
+}
+
+/* The scene is drawn on a light ground, so the overlay's text on it is dark, and the overlay never takes the pointer. */
+.ss-overlay {
+    pointer-events: none;
+    fill: #1e293b;
+    font-size: 15px;
+}
+
+.ss-overlay .ss-legend {
+    font-size: 10.5px;
+}
+
+.ss-overlay .ss-caption {
+    fill: #475569;
+}
+
+.ss-overlay .ss-slot-frame {
+    fill: none;
+    stroke: #64748b;
+}
+
+.ss-overlay .ss-server.ss-down {
+    text-decoration: line-through;
+}
+
+.ss-overlay .ss-selected .ss-slot-frame {
+    stroke: #1d4ed8;
+    stroke-width: 4;
+}
+
+.ss-overlay .ss-empty .ss-slot-frame {
+    stroke-dasharray: 4 3;
+}

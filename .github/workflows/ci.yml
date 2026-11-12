@@ -1,0 +1,85 @@
+# Everything here runs from this repository alone, on the toolchain in rust-toolchain.toml, which is the oldest that the project supports (1.85).
+# svg-dom-graph comes from crates.io: the `registry` job fails if it ever comes from anywhere else.
+name: ci
+
+on:
+  push:
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  native:
+    name: format, lint and native tests (Rust 1.85)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.85
+        with:
+          components: clippy, rustfmt
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --all --check
+      - run: cargo clippy --workspace --all-targets --locked -- -D warnings
+      - run: cargo clippy -p dess-app --target wasm32-unknown-unknown --all-targets --locked -- -D warnings
+      - run: cargo test --workspace --exclude dess-app --locked
+
+  stable:
+    name: the same tests on current stable Rust
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo test --workspace --exclude dess-app --locked
+        env:
+          RUSTUP_TOOLCHAIN: stable
+      - run: cargo check -p dess-app --target wasm32-unknown-unknown --locked
+        env:
+          RUSTUP_TOOLCHAIN: stable
+
+  browser:
+    name: build the site, and test it in Chrome
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.85
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: wasm-pack@0.15.0
+      - run: scripts/build.sh
+      - name: The site is what the README says it is
+        run: |
+          test -f web/index.html -a -f web/main.js -a -f web/style.css -a -f web/pkg/dess_app.js -a -f web/pkg/dess_app_bg.wasm
+          ls -l web web/pkg
+      - run: wasm-pack test --headless --chrome app
+      - run: wasm-pack test --headless --chrome crates/service-sim
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: web
+          retention-days: 14
+
+  registry:
+    name: svg-dom-graph is the published crate
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.85
+      - name: It is in Cargo.lock from the registry, and no manifest points at a path or a git source for it
+        run: |
+          grep -A3 '^name = "svg-dom-graph"' Cargo.lock | tee /dev/stderr | grep -q 'source = "registry+https://github.com/rust-lang/crates.io-index"'
+          ! grep -rn 'svg-dom-graph *= *{[^}]*\(path\|git\)' app/Cargo.toml crates/*/Cargo.toml
+
+  supply-chain:
+    name: advisories, licences and sources
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: EmbarkStudios/cargo-deny-action@v2
