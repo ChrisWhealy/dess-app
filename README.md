@@ -58,7 +58,9 @@ CI runs all of these, on Rust 1.85 and on current stable, and checks that `svg-d
 ## The svg-dom-graph version
 
 `crates/service-sim/Cargo.toml` and `app/Cargo.toml` name `svg-dom-graph = "0.2.50"`, which is the published crate.
-To move to a newer release, change that, run `cargo update -p svg-dom-graph`, and run the tests above.
+To move to a newer release, run `scripts/adopt.sh <version>`.
+It changes the version, updates the lock file, refuses a local patch, and runs everything that CI runs against the registry's copy.
+It is the last step of a release of the library.
 A release that changes what the application relies on fails them, and that is the point of keeping the application outside the library's repository.
 
 ## What building it showed
