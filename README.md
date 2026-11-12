@@ -1,5 +1,7 @@
 # Service simulator
 
+[![CI](https://github.com/ChrisWhealy/dess-app/actions/workflows/ci.yml/badge.svg)](https://github.com/ChrisWhealy/dess-app/actions/workflows/ci.yml) [![Rust](https://img.shields.io/badge/rust-1.85.0%2B-blue.svg?maxAge=3600)](https://github.com/ChrisWhealy/dess-app/blob/main/rust-toolchain.toml)
+
 A discrete-event simulation of a service: a queue, one to five servers, and jobs that arrive, wait, run, time out, retry, fail and are cancelled.
 It runs in the browser, and is drawn as one long-lived scene by [`svg-dom-graph`](https://crates.io/crates/svg-dom-graph).
 
@@ -50,6 +52,7 @@ wasm-pack test --headless --chrome crates/service-sim   # the surface and contro
 cargo deny check                                        # advisories, licences and sources
 ```
 
+Each crate that has browser tests has a `webdriver.json` that starts Chrome with `--no-sandbox`, which a CI runner needs and a desktop does not mind.
 CI runs all of these, on Rust 1.85 and on current stable, and checks that `svg-dom-graph` in `Cargo.lock` comes from the registry.
 
 ## The svg-dom-graph version
