@@ -22,7 +22,7 @@ So it shows what a consumer meets: the packaged crate, its dependencies, its API
 
 ## Build and run
 
-You need Rust 1.85 or newer, which `rust-toolchain.toml` selects, with the `wasm32-unknown-unknown` target, [wasm-pack](https://rustwasm.github.io/wasm-pack/) 0.13 or newer, and Node 18 or newer to serve the site.
+You need Rust 1.85 or newer, which `rust-toolchain.toml` selects, with the `wasm32-unknown-unknown` target, [wasm-pack](https://drager.github.io/wasm-pack/) 0.13 or newer, and Node 18 or newer to serve the site.
 
 ```sh
 scripts/build.sh            # a release build into web/pkg (scripts/build.sh --dev is quicker)
